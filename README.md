@@ -198,7 +198,7 @@ Il faut penser au final à démarrer le router dans un bloc <b>try/catch</b> :
 try {
 	$router->run();
 } catch(Exception $e) {
-    //Affiche les détails de l'erreur dans une vue
+    	//Affiche les détails de l'erreur dans une vue
 	(new Controller())->renderView('Errors.index', 'Errors.layout', ['error'=>$e]);
 }
 ```
@@ -208,7 +208,7 @@ Si vous utilisez une base de données, assurez-vous que les configurations sont 
 
 ### Entity
 
-Pour chaque table que vous utiliserez vous créerez un classe d'entité correspondante, dans laquelle chaque attribut correspond clairement à une colonne, et s'écrit exactement de la même manière.<br/>
+Pour chaque table que vous utiliserez vous créerez une classe d'entité correspondante, dans laquelle chaque attribut correspond clairement à une colonne, et s'écrit exactement de la même manière.<br/>
 
 Par exemple pour une table <b>articles</b> avec des colonnes suivantes :
 <ul>
@@ -283,14 +283,14 @@ Vous pouvez maintenant manipuler ou récupérer les données soit à travers un 
 Exemple d'utilisation
 ```php
 $router->get('/', function() {
-    //Tous les articles
-    $articles = ArticleRepository::findAll();
+    	//Tous les articles
+    	$articles = ArticleRepository::findAll();
 	(new Controller())->renderView('Home.index', 'layout', ['articles'=>$articles]);
 });
 
 $router->get('/articles/:id', function() use($router) {
-    //Les paramètres de la route pour récupérer l'id
-    $params = $router->getRoute('articles.get')->getParameters();
+    	//Les paramètres de la route pour récupérer l'id
+    	$params = $router->getRoute('articles.get')->getParameters();
 
 	$a = ArticleRepository::find($params[0]);
 
@@ -299,8 +299,8 @@ $router->get('/articles/:id', function() use($router) {
 }, 'articles.get');
 
 $router->get('/articles/author/:name', function() use($router) {
-    //Les paramètres de la route pour récupérer l'auteur
-    $params = $router->getRoute('articles.get.author')->getParameters();
+    	//Les paramètres de la route pour récupérer l'auteur
+    	$params = $router->getRoute('articles.get.author')->getParameters();
 
 	$a = ArticleRepository::findWhere(['auteur'], [$params[0]]);
 
@@ -309,10 +309,10 @@ $router->get('/articles/author/:name', function() use($router) {
 }, 'articles.get.author');
 
 $router->post('/articles', function() use($router) {
-    //Les paramètres de la requête
-    $params = $router->getRoute('articles.post')->getExtraParameters();
+    	//Les paramètres de la requête
+    	$params = $router->getRoute('articles.post')->getExtraParameters();
 
-    $a = new Article($params);
+    	$a = new Article($params);
 
 	$saved = ArticleRepository::save($a);
 
