@@ -330,7 +330,7 @@ Il est possible de récupérer les données selon une structure différente de c
 
 Pour cela il faut créer une classe resource dérivée de ```Gravity\Core\App\Resources\AbstractResource``` adaptée à votre entité.
 
-Pour notre exemple article, on pourrait le formater pour afficher rédacteur au lieu d'auteur, on pourrait aussi afficher seulement les 20 premiers caractères du contenu.
+Pour notre exemple article, on pourrait le formater pour afficher rédacteur au lieu d'auteur, on pourrait aussi afficher seulement les 20 premiers caractères du contenu. pour cela on implémente la méthode ```toArray()``` en retournant un tableau renfermant votre nouvelle structure
 
 Illustration :
 ```php
