@@ -1,0 +1,27 @@
+{
+    "name": "gravity/gravity-core",
+    "description": "Gravity PHP Library for gravity-framework",
+    "keywords": ["framework", "gravity", "php", "GRAVITY-CORE", "library"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "\"Schneider Chéry\"",
+            "email": "schneiderchery7@gmail.com"
+        }
+    ],
+
+    "require": {
+    },
+    
+    "autoload": {
+        "psr-4": {
+            "Gravity\\Core\\": "src/",
+            "Gravity\\Core\\App\\": "src/app",
+            "Gravity\\Core\\Database\\": "src/database",
+            "Gravity\\Core\\Exceptions\\": "src/Exceptions",
+            "Gravity\\Core\\Routing\\": "src/routes"
+        }
+    },
+
+    "minimum-stability": "dev"
+}
