@@ -185,7 +185,7 @@ Dans l'action on affiche une vue <b>index</b> présente dans le dossier ```templ
 ```php
 $router->get('/shop', [ShopController::class, 'index']);
 
-$router->get('/shop/:productId', "App\Controllers\VehiculeController@show");
+$router->get('/shop/:productId', "App\Controllers\ShopController@show");
 ```
 
 Deux autres moyens de déclarer une route, cette fois-ci en utilisant des méthodes de controleur
