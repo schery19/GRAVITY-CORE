@@ -29,7 +29,7 @@ composer dump-autoload
 Dans le fichier <b>autoload.php</b> dans le dossier vendor de votre projet ajouter la ligne suivante au debut du fichier
 
 ```php
-require '../core/vendor/autoload.php';
+require '../GRAVITY-CORE-main/vendor/autoload.php';
 ```
 
 
