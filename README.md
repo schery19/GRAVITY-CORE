@@ -168,7 +168,7 @@ $router->get('/', function() {
 
 $router->get('/shop', [ShopController::class, 'index']);
 
-$router->get('/shop/:productId', "App\Controllers\VehiculeController@show");
+$router->get('/shop/:productId', "App\Controllers\ShopController@show");
 
 ```
 
