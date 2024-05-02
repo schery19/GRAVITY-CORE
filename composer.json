@@ -1,5 +1,5 @@
 {
-    "name": "gravity/gravity-core",
+    "name": "gravity-framework/gravity-core",
     "description": "Gravity PHP Library for gravity-framework",
     "keywords": ["framework", "gravity", "php", "GRAVITY-CORE", "library"],
     "license": "MIT",
