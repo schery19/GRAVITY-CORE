@@ -63,10 +63,10 @@ class Route extends AbstractResource {
 
 
 	/** 
-	 * Les autres paramètres de la requête
+	 * Les autres paramètres et données éventuelles du corps de la requête
 	 * @return array l'ensemble des paramètres avec leurs noms
 	 */
-	public function getExtraParameters() {
+	public function getExtras() {
 		$params = array();
 
 		$i = 0;
