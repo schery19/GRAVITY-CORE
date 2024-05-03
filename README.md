@@ -261,7 +261,7 @@ Pour l'instant il n'y a pas encore d'automatisme permettant de gérer les access
 
 Pour chaque classe d'entité créée, il faut une classe de type ```Gravity\Core\App\Repository\Repository```, pour communiquer effectivement avec la base à tout moment.
 
-Classe <b>ArcticleRepositry</b> :
+Classe <b>ArcticleRepository</b> :
 ```php
 use Gravity\Core\App\Repository\Repository;
 
