@@ -19,8 +19,8 @@ composer install
 ```
 
 ### Manuellement
-Vous pouvez aussi télécharger directement le code source sur le [dépot]() github et décompresser le dossier <b>core</b> dans la racine de votre projet.<br/><br/>
-Vous devez utiliser quand même composer pour utiliser le core. En vous positionnant dans le dossier core décompressé, tapez la commande suivante :
+Vous pouvez aussi télécharger directement le code source sur le [dépot]() github et décompresser le dossier dans la racine de votre projet.<br/><br/>
+Vous devez utiliser quand même composer pour utiliser le core. En vous positionnant dans le dossier décompressé, tapez la commande suivante :
 
 ```php
 composer dump-autoload
@@ -365,11 +365,11 @@ $articleFormatted = (new ArticleResource())->make($article);
 (new Controller())->renderView('Articles.show', 'layout', ['article'=>$articleFormatted]);
 ```
 
-<b>Attention</b> : Pour formatter plusieurs entités de même type, vous utilisez la méthode ```collection()``` au lieu de ```make()```
+<b>Attention</b> : Pour formatter un tableau d'entités, vous utilisez la méthode ```collection()``` au lieu de ```make()```
 
 
 ## Licences
-<b>GRAVITY-CORE</b> est publiée sous licence MIT, voir le fichier LICENSE.txt ou visiter le [site](http://www.opensource.org/licenses/mit-license.php) pour plus de détails
+<b>GRAVITY-CORE</b> est publiée sous licence MIT, voir le fichier LICENSE.txt ou visiter le [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php) pour plus de détails
 
 
 ## Contributions
