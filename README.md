@@ -369,7 +369,7 @@ $articleFormatted = (new ArticleResource())->make($article);
 
 
 ## Licences
-<b>GRAVITY-CORE</b> est publiée sous licence MIT, voir le fichier LICENSE.txt ou visiter le [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php) pour plus de détails
+<b>GRAVITY-CORE</b> est publiée sous licence MIT, voir le fichier LICENSE.txt ou visiter [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php) pour plus de détails
 
 
 ## Contributions
