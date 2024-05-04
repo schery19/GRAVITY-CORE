@@ -309,7 +309,7 @@ $router->get('/articles/author/:name', function() use($router) {
 }, 'articles.get.author');
 
 $router->post('/articles', function() use($router) {
-    	//Les paramètres de la requête
+    	//Les paramètres et données de la requête
     	$params = $router->getRoute('articles.post')->getExtras();
 
     	$a = new Article($params);
