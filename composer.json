@@ -2,6 +2,7 @@
     "name": "gravity-framework/gravity-core",
     "description": "Gravity PHP Library for gravity-framework",
     "keywords": ["framework", "gravity", "php", "GRAVITY-CORE", "library"],
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
