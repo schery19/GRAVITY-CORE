@@ -49,7 +49,7 @@ configs.php :
 //A modifier selon la configuration des dossiers du projet
 define('DS', DIRECTORY_SEPARATOR);//Séparateur de dossier selon l'OS
 define('VIEWS', dirname(__DIR__). DS .'templates'.DS);//Les maquettes
-define('SCRIPTS', dirname($_SERVER['SCRIPT_NAME']).DS);//Le dossier public/
+define('SCRIPTS', dirname($_SERVER['SCRIPT_NAME']).DS);//Le dossier dans lequel se trouve votre fichier index.php (contrôleur frontal), par exemple public/
 define('STYLES', SCRIPTS.'css'.DS);//Les fichiers css
 define('JS', SCRIPTS.'js'.DS);//Les fichiers javascript
 define('IMAGES', SCRIPTS.'images'.DS);//Les images
@@ -132,7 +132,7 @@ Exemple d'un gabarit :
 
 Vous pouvez constater la partie qui varie du gabarit est déclarée en php par la variable ```$content```<br/><br/>
 
-Exemple d'une vue qui descent du gabarit :
+Exemple d'une vue qui descend du gabarit :
 ```php
 <?php $title = "Accueil" ?>
 
