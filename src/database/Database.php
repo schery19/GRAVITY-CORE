@@ -36,10 +36,11 @@ class Database {
 				$this->user,
 				$this->pass,
 				array(
-					\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
 					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
 				)
 			);
+
+			$this->db->exec("SET NAMES UTF8");
 		} catch (\PDOException $e) {
 			throw new \Exception("Impossible de se connecter, cause ".$e->getMessage());
 		}
@@ -77,6 +78,22 @@ class Database {
 		} catch(\PDOException $e) {
 			throw new \Exception($e->getMessage());
 		}
+	}
+
+	
+	public function insert($sql, $params = array()) {
+		$typeReq = explode(' ', $sql);
+
+		if($typeReq[0] != strtoupper('insert'))
+			throw new \Exception('The query string specified as parameter is incompatible with this function');
+
+		$req = $this->exec($sql, $params);
+
+		if($req)
+			return $this->db->lastInsertId();
+		else
+			return false;
+		
 	}
 
 }
