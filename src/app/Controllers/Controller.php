@@ -8,6 +8,7 @@ namespace Gravity\Core\App\Controllers;
 
 
 use Gravity\Core\App\Resources\AbstractResource;
+use Gravity\Core\Routing\Route;
 use Gravity\Core\Exceptions\BadMethodException;
 use Gravity\Core\Exceptions\BadRequestException;
 use Gravity\Core\Exceptions\NoRouteException;
@@ -18,6 +19,12 @@ use Gravity\Core\Exceptions\ControllerException;
 class Controller {
 
 	protected $router;
+
+
+
+	public function __construct($router = null) {
+		$this->router = $router;
+	}
 
 
 	public function render($data, $code = 200) {
@@ -68,6 +75,7 @@ class Controller {
 
 	/**
 	 * Affichage d'ume vue
+	 * 
 	 * @param string $path le chemin de la vue.
 	 * Si la vue se situe dans un dossier, utilisez '.' au lieu de '/' comme séparateur
 	 * @param string $layout le gabarit de la vue s'il y en a.
@@ -137,6 +145,7 @@ class Controller {
 
 	/**
 	 * Générer un lien à partir d'une route nommée
+	 * 
 	 * @param string $name le nom de la route.
 	 * @param array $values valeurs des paramètres si l'url en contient
 	 * @return string|null l'url
@@ -188,6 +197,17 @@ class Controller {
 		if(!$found) {
 			throw new NoRouteException("Route named {$name} not found");
 		}
+	}
+
+
+	
+	public function __get($name) {
+		/**
+		 * Retourne la route exécutant le controleur
+		 * @return Route la route trouvée
+		 */
+		if($name == 'currentRoute')
+			return $this->router->getCurrentRoute();
 	}
 
 }
