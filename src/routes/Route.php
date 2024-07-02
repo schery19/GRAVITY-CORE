@@ -63,7 +63,8 @@ class Route extends AbstractResource {
 
 
 	/** 
-	 * Les autres paramètres et données éventuelles du corps de la requête
+	 * Les autres paramètres et données du corps de la requête
+	 * 
 	 * @return array l'ensemble des paramètres avec leurs noms
 	 */
 	public function getExtras() {
@@ -109,7 +110,7 @@ class Route extends AbstractResource {
 			} else {
 				$methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):array();
 
-				$functionName->invokeArgs(new $this->action[0](), $methodArgs);
+				$functionName->invokeArgs(new $this->action[0]($router), $methodArgs);
 			}
 			
 		} else {
