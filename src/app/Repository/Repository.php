@@ -34,6 +34,7 @@ abstract class Repository {
 	
 	/**
 	 * Trouver tous les enregistrements
+	 * 
 	 * @param array|null $columns Colonnes à récupérer
 	 * @param string|null $orderClause Colonnes à ordonner
 	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
@@ -73,6 +74,7 @@ abstract class Repository {
 
 	/**
 	 * Trouver un enregistrement à partir d'un identifiant unique (l'id)
+	 * 
 	 * @param mixed $id
 	 * @return object|null
 	*/
@@ -92,6 +94,9 @@ abstract class Repository {
 	
  	/**
   	 * Trouver un/des enregistrement(s) à partir d'une/des condition(s)
+	 * Retourne un tableau ou un objet si toutes les conditions ont été vérifiées
+	 * Retourne un tableau vide si aucune donnée n'a été trouvée ou un objet en cas d'un seul enregistrement trouvé
+	 * 
   	 * @param array $whereColums colonnes sur lesquelles les conditions ont été posées
   	 * @param array $values valeurs colonnes conditionnées
 	 * @param string|null $orderClause Colonnes à ordonner
@@ -145,7 +150,65 @@ abstract class Repository {
 
 
 	/**
+  	 * Trouver un/des enregistrement(s) à partir d'une/des condition(s)
+	 * Retourne un tableau ou un objet si au moins l'une des conditions est vérifiée
+	 * Retourne un tableau vide si aucune donnée n'a été trouvée ou un objet en cas d'un seul enregistrement trouvé
+	 * 
+  	 * @param array $whereColums colonnes sur lesquelles les conditions ont été posées
+  	 * @param array $values valeurs colonnes conditionnées
+	 * @param string|null $orderClause Colonnes à ordonner
+	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
+	 * @param int|null $limit Nombre d'enregistrements à récupérer
+	 * @param int|null $offset point de départ
+  	 * @return array|object
+	 * 
+	 * @throws ControllerException
+  	*/
+	public static function findOrWhere(array $whereColums, array $values, string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
+
+		static::validEntity();
+
+		self::getDatabase();
+
+		if(\count($whereColums) < 1)
+			throw new ControllerException("Column(s) not specified on ".static::class."::findOrWhere method");
+
+		if(\count($values) < 1)
+			throw new ControllerException("Column(s) value(s) not specified on ".static::class."::findOrWhere method");
+
+		$whereClause = (\count($whereColums) < 1)?static::$primary_key."=?":\implode('=? or ', $whereColums);
+
+		$whereClause .= (\count($whereColums) > 0)?'=?':'';
+
+		$orderString = (!\is_null($orderClause) && !\is_null($orderArgs)) ? "order by $orderClause $orderArgs" : "";
+
+		$limitString = (!\is_null($limit)) ? "limit ".$limit : "";
+
+		$offsetString = (!\is_null($offset)) ? "offset ".$offset : "";
+
+		$req = self::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
+
+		if(\count($req) > 1) {
+
+			$entities = array();
+
+			foreach($req as $e) {
+				array_push($entities, (new static::$entity($e))->setId($e[static::$primary_key]));
+			}
+
+			return $entities;
+		} else if(\count($req) == 1) {
+			return (new static::$entity($req[0]))->setId($req[0][static::$primary_key]);
+		} else {
+			return array();
+		}
+		
+	}
+
+
+	/**
 	 * Effectuer votre propre requete personnalisée pour obtenir une/des entité(s)
+	 * 
 	 * @param string $req votre requete personnalisée
 	 * @param array $values vos données si vous utilisez une requete préparée
 	 * @param string|null $orderClause Colonnes à ordonner
@@ -188,8 +251,9 @@ abstract class Repository {
 
 	/**
 	 * Effectuer un enregistrement
+	 * 
 	 * @param Entity $entity l'entité à persister dans la base
-	 * @return bool|null
+	 * @return bool|int|null
 	 * 
 	 * @throws BadRequestException
 	*/
@@ -232,7 +296,6 @@ abstract class Repository {
 
 
 			$sql = "insert into ". static::$table ." (". \implode(',', array_keys($dataArray)) .") values(". $placeHolders .")";
-			
 
 			$req = self::getDatabase()->exec($sql, $dataArray);
 
@@ -248,6 +311,7 @@ abstract class Repository {
 
 	/**
 	 * Mise à jour d'un enregistrement
+	 * 
 	 * @param array $data les nouvelles données à persister dans la base
 	 * @param mixed $where l'id correspondant
 	 * @return bool|null
@@ -275,6 +339,8 @@ abstract class Repository {
 			}
 		}
 
+		unset($data['id']);
+
 		$columns = array();
 
 		foreach($data as $k => $v) {
@@ -301,6 +367,7 @@ abstract class Repository {
 
 	/**
 	 * Effectuer votre propre requete personnalisée pour obtenir une ressource
+	 * 
 	 * @param string $sql votre requete
 	 * @param array $values vos données si vous utilisez une requete préparée
 	 * @return array
@@ -329,6 +396,7 @@ abstract class Repository {
 
 	/**
 	 * Effectuer une correspondance entre la requete spécifiée et l'entité dont le repository est responsable
+	 * 
 	 * @param string $values la requete
 	 * 
 	 * @throws ControllerException
