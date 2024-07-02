@@ -8,7 +8,7 @@ Dans la racine de votre projet, créer un fichier composer.json s'il n'existe pa
 ```json
 {
     "require": {
-        "gravity-framework/gravity-core": "^0.1"
+        "gravity-framework/gravity-core": "^0.5"
     }
 }
 ```
