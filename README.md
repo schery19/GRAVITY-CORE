@@ -34,7 +34,7 @@ require '../GRAVITY-CORE-main/vendor/autoload.php';
 
 
 ## Dépendances
-Pour utiliser GRAVITY-CORE, votre projet doit répondre à quelques critères :
+Pour utiliser GRAVITY-CORE, vous pouvez soit utiliser [gravity-framework](https://github.com/schery19/gravity-framework) ou faire en sorte que la structure de votre projet réponde à quelques critères :
 
 <ul>
 <li>
@@ -145,6 +145,9 @@ Voir dans l'[exemple]() d'un projet comment utiliser les templates avec gravity.
 </li>
 
 </ul>
+
+### Note :
+En utlisant [gravity-framework](https://github.com/schery19/gravity-framework), la structure récommandée pour votre projet est automatiquement respectée
 
 ## Routes
 Dans le fichier principal de votre projet, par exemple index.php, vous utilisez l'objet ```Router``` pour déclarer vos routes.
