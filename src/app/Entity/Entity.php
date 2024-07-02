@@ -20,6 +20,7 @@ abstract class Entity extends AbstractResource {
 
 	protected static $required = array(); //Champs obligatoires
 
+
 	public function __construct($data = array()) {
 
 		$this->entity = static::class;
@@ -42,13 +43,21 @@ abstract class Entity extends AbstractResource {
 
 	private function hydrate(array $data) {
 
+		$this->data = $data;
+
 		foreach ($data as $k => $v) {
 			$method = 'set'.ucfirst($k);
 
-			if(method_exists($this, $method))
+			if(method_exists($this, $method)) {
 				$this->$method($v);
+			} else {
+				$this->data[$k] = $this->$k;
+			}
+
 		}
+
 	}
+	
 
 	private function refresh(array $data) {
 		$out = array();
@@ -57,11 +66,7 @@ abstract class Entity extends AbstractResource {
 			$data['id'] = $this->getId();
 
 		foreach ($data as $k => $v) {
-			$method = 'get'.ucfirst($k);
-
-			if(method_exists($this, $method)) {
-				$out[$k] = $this->$method($v);
-			}
+			$out[$k] = $v;
 		}
 
 		if(\count(static::$masks) > 0) {
@@ -97,6 +102,19 @@ abstract class Entity extends AbstractResource {
 		$this->id = $id;
 		return $this;
 	}
+
+
+	public function __get($name) {
+		return $this->data[$name]??null;
+	}
+
+
+	public function __set($name, $value) {
+		$this->data[$name] = $value;
+
+		return $this;
+	}
+
 
 }
 
