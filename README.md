@@ -1,5 +1,5 @@
 # GRAVITY-CORE
-Bibliothèque principale pour le framework gravity, vous pouvez l'utiliser aussi pour votre propre projet moyennant que ce dernier respecte quelques dépendences.
+Bibliothèque principale pour le framework gravity, vous pouvez l'utiliser aussi pour votre propre projet moyennant que ce dernier respecte quelques dépendances.
 
 ## Installation
 ### Via composer
@@ -33,7 +33,7 @@ require '../GRAVITY-CORE-main/vendor/autoload.php';
 ```
 
 
-## Dépendences
+## Dépendances
 Pour utiliser GRAVITY-CORE, votre projet doit répondre à quelques critères :
 
 <ul>
@@ -230,32 +230,10 @@ class Article extends Entity {
     private $auteur;
     private $date_publication;
 
-
-    public function getTitre() { return $this->titre; }
-
-    public function getContenu() { return $this->contenu; }
-
-    //... les autres getters
-
-
-    
-    public function setTitre($titre) {
-        $this->titre = $titre;
-        return $this;
-    }
-
-    public function setContenu($contenu) {
-        $this->contenu = $contenu;
-        return $this;
-    }
-
-    //... les autres setters (gardez le style fluent conseillé)
 }
 ```
 
 <b>Note</b> : Inutile de préciser l'attribut ```id```, puisque gravity prend en charge automatiquement les clés primaires.
-
-Pour l'instant il n'y a pas encore d'automatisme permettant de gérer les accesseurs et mutateurs sans devoir les créer manuellement.
 
 ### Repository
 
