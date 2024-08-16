@@ -40,6 +40,7 @@ abstract class Repository {
 	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
 	 * @param int|null $limit Nombre d'enregistrements à récupérer
 	 * @param int|null $offset point de départ
+	 * 
 	 * @return array
 	*/
 	public static function findAll(array $columns = null, string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
@@ -76,6 +77,7 @@ abstract class Repository {
 	 * Trouver un enregistrement à partir d'un identifiant unique (l'id)
 	 * 
 	 * @param mixed $id
+	 * 
 	 * @return object|null
 	*/
 	public static function find($id) {
@@ -103,7 +105,8 @@ abstract class Repository {
 	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
 	 * @param int|null $limit Nombre d'enregistrements à récupérer
 	 * @param int|null $offset point de départ
-  	 * @return array|object
+	 * 
+  	 * @return array
 	 * 
 	 * @throws ControllerException
   	*/
@@ -131,7 +134,7 @@ abstract class Repository {
 
 		$req = self::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
-		if(\count($req) > 1) {
+		if(\count($req) >= 1) {
 
 			$entities = array();
 
@@ -140,8 +143,6 @@ abstract class Repository {
 			}
 
 			return $entities;
-		} else if(\count($req) == 1) {
-			return (new static::$entity($req[0]))->setId($req[0][static::$primary_key]);
 		} else {
 			return array();
 		}
@@ -160,7 +161,8 @@ abstract class Repository {
 	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
 	 * @param int|null $limit Nombre d'enregistrements à récupérer
 	 * @param int|null $offset point de départ
-  	 * @return array|object
+	 * 
+  	 * @return array
 	 * 
 	 * @throws ControllerException
   	*/
@@ -188,7 +190,7 @@ abstract class Repository {
 
 		$req = self::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
-		if(\count($req) > 1) {
+		if(\count($req) >= 1) {
 
 			$entities = array();
 
@@ -197,8 +199,6 @@ abstract class Repository {
 			}
 
 			return $entities;
-		} else if(\count($req) == 1) {
-			return (new static::$entity($req[0]))->setId($req[0][static::$primary_key]);
 		} else {
 			return array();
 		}
@@ -215,7 +215,8 @@ abstract class Repository {
 	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
 	 * @param int|null $limit Nombre d'enregistrements à récupérer
 	 * @param int|null $offset point de départ
-	 * @return array|object|null
+	 * 
+	 * @return array
 	*/
 	public static function fromQuery(string $req, array $values = array(), string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
 
@@ -231,7 +232,7 @@ abstract class Repository {
 
 		$req = self::getDatabase()->query($req." $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
-		if(\count($req) > 1) {
+		if(\count($req) >= 1) {
 
 			$entities = array();
 
@@ -240,8 +241,6 @@ abstract class Repository {
 			}
 
 			return $entities;
-		} else if(\count($req) == 1) {
-			return (new static::$entity($req[0]))->setId($req[0][static::$primary_key]);
 		} else {
 			return array();
 		}
@@ -253,6 +252,7 @@ abstract class Repository {
 	 * Effectuer un enregistrement
 	 * 
 	 * @param Entity $entity l'entité à persister dans la base
+	 * 
 	 * @return bool|int|null
 	 * 
 	 * @throws BadRequestException
@@ -314,6 +314,7 @@ abstract class Repository {
 	 * 
 	 * @param array $data les nouvelles données à persister dans la base
 	 * @param mixed $where l'id correspondant
+	 * 
 	 * @return bool|null
 	 * 
 	 * @throws BadRequestException
@@ -370,13 +371,14 @@ abstract class Repository {
 	 * 
 	 * @param string $sql votre requete
 	 * @param array $values vos données si vous utilisez une requete préparée
+	 * 
 	 * @return array
 	*/
 	public static function rawQuery(string $req, array $values = array()) {
 
 		$req = self::getDatabase()->query($req, $values, \PDO::FETCH_ASSOC);
 
-		if(\count($req) > 1) {
+		if(\count($req) >= 1) {
 
 			$resources = array();
 
@@ -385,8 +387,6 @@ abstract class Repository {
 			}
 
 			return $resources;
-		} else if(\count($req) == 1) {
-			return $req[0];
 		} else {
 			return array();
 		}
