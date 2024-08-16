@@ -45,10 +45,15 @@ abstract class Entity extends AbstractResource {
 		$reflectionClass = new \ReflectionClass(static::class);
 		$properties = $reflectionClass->getProperties();
 
+		$reflectionParentClass = new \ReflectionClass(self::class);
+		$parentProperties = $reflectionParentClass->getProperties();
+
 		$columns = array();
 
-		foreach ($properties as $property) {
+		foreach (array_diff($properties, $parentProperties) as $property) {
+
 			$columns[] = $property->getName();
+			
 		}
 
 		return $columns;
