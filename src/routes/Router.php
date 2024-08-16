@@ -36,6 +36,7 @@ class Router {
 	 * Retourne une route nommée
 	 * 
 	 * @param string $name le nom de la route
+	 * 
 	 * @return Route la route trouvée
 	 * 
 	 * @throws NoRouteException
