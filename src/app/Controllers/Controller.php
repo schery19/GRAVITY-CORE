@@ -19,8 +19,7 @@ use Gravity\Core\Exceptions\ControllerException;
 class Controller {
 
 	protected $router;
-
-
+	
 
 	public function __construct($router = null) {
 		$this->router = $router;
@@ -114,13 +113,29 @@ class Controller {
 	}
 
 
-	//Générer un lien directement à partir d'une vue
+	/**
+	 * Générer un lien directement à partir d'une vue\
+	 * 
+	 * @param string $url l'url à générer
+	 * 
+	 * @return string
+	 */
 	public function generateUrl(string $url) {
 		return trim($url);
 	}
 
 
-	//Exécuter dynamiquement une fonction avec ses éventuels arguments
+	/**
+	 * Exécuter dynamiquement une fonction avec ses éventuels arguments
+	 * 
+	 * @param string $methodName le nom de la méthode du controleur exécuter
+	 * @param mixed $arguments les éventuels arguments de la méthode
+	 * @param mixed $router le router qui exécute le controleur
+	 * 
+	 * @throws \Gravity\Core\Exceptions\ControllerException
+	 * 
+	 * @return mixed
+	 */
 	public function invoke(string $methodName, $arguments = array(), $router) {
 
 		try {
@@ -148,6 +163,7 @@ class Controller {
 	 * 
 	 * @param string $name le nom de la route.
 	 * @param array $values valeurs des paramètres si l'url en contient
+	 * 
 	 * @return string|null l'url
 	 * 
 	 * @throws BadMethodException|BadRequestException|NoRouteException
@@ -204,6 +220,7 @@ class Controller {
 	public function __get($name) {
 		/**
 		 * Retourne la route exécutant le controleur
+		 * 
 		 * @return Route la route trouvée
 		 */
 		if($name == 'currentRoute')
