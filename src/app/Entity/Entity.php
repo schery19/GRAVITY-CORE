@@ -41,6 +41,19 @@ abstract class Entity extends AbstractResource {
 		return static::$masks;
 	}
 
+	public function getColumns() {
+		$reflectionClass = new \ReflectionClass(static::class);
+		$properties = $reflectionClass->getProperties();
+
+		$columns = array();
+
+		foreach ($properties as $property) {
+			$columns[] = $property->getName();
+		}
+
+		return $columns;
+	}
+
 	private function hydrate(array $data) {
 
 		$this->data = $data;
