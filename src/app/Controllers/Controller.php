@@ -197,11 +197,6 @@ class Controller {
 					return isset($params[$key])?$params[$key]:$key;
 				}, $r->getPath());
 
-				// var_dump($args);
-				// var_dump($r->getPath());
-				// var_dump($params);
-				// var_dump($finalUrl);
-
 				$found = true;
 
 				return $finalUrl;
