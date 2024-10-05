@@ -215,25 +215,8 @@ Par exemple pour une table <b>articles</b> avec des colonnes suivantes :
 <li>commentaires</li>
 </ul>
 
-Vous aurez une classe ```Article``` dérivée de la classe ```Gravity\Core\App\Entity\Entity``` :
-```php
-use Gravity\Core\App\Entity\Entity;
+Vous aurez une classe ```Article``` dérivée de la classe ```Gravity\Core\App\Entity\Entity``` avec uniquement les champs requis :
 
-class Article extends Entity {
-
-    private $titre;
-    private $contenu;
-    private $auteur;
-    private $date_publication;
-    private $date_modification;
-    private $commentaires;
-
-}
-```
-
-<b>Note</b> : Inutile de préciser l'attribut ```id```, puisque gravity prend en charge automatiquement les clés primaires.
-
-Vous pouvez aussi ne mettre que les champs requis de la table : 
 
 ```php
 use Gravity\Core\App\Entity\Entity;
