@@ -14,7 +14,12 @@ abstract class AbstractResource implements ResourceArray {
 
     protected $entity;
 
-
+    /**
+     * Retourne les données de l'entité sous forme de tableau personalisable 
+     * @param mixed $data Instance de l'entité
+     * @throws \Exception
+     * @return array
+     */
     public final function make($data) {
         $out = array();
 
@@ -29,7 +34,12 @@ abstract class AbstractResource implements ResourceArray {
         return $out;
     }
 
-
+    /**
+     * Retourne les données sous forme de tableau personalisable 
+     * @param mixed $data Instance ou tableau du type de l'entité
+     * @throws \Exception
+     * @return array
+     */
     public final function collection($data) {
         $out = array();
 
