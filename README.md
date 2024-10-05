@@ -3,19 +3,10 @@ Bibliothèque principale pour le framework gravity, vous pouvez l'utiliser aussi
 
 ## Installation
 ### Via composer
-Dans la racine de votre projet, créer un fichier composer.json s'il n'existe pas encore, puis ajouter dans la section require :
+Utilisez [composer](https://getcomposer.org/download/) pour installer GRAVITY-CORE, dans la racine de votre projet tapez la commande suivante :
 
-```json
-{
-    "require": {
-        "gravity-framework/gravity-core": "^0.8"
-    }
-}
-```
-Utilisez [composer](https://getcomposer.org/download/) pour installer GRAVITY-CORE, puis tapez la commande suivante dans la racine du projet
-
-```php
-composer install
+```bash
+composer require gravity-framework/gravity-core
 ```
 
 ### Manuellement
@@ -384,3 +375,4 @@ Toutes les contributions sont les bienvenues en vue d'améliorer la librairie et
 
 ## Extra 
 N'hésitez pas à reporter vos problèmes dans la section [issues](https://github.com/schery19/gravity-core/issues), pour une meilleure communication et contribuer le plus possible à l'avancement du projet
+
