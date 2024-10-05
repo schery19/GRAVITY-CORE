@@ -12,7 +12,7 @@ use Gravity\Core\App\Resources\AbstractResource;
 
 abstract class Entity extends AbstractResource {
 
-    protected $id;
+    	protected $id;
 
 	protected $data;
 
