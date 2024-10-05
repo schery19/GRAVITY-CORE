@@ -226,7 +226,7 @@ class Article extends Entity {
     private $auteur;
     private $date_publication;
     private $date_modification;
-    private $date_commentaires;
+    private $commentaires;
 
 }
 ```
