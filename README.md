@@ -211,7 +211,7 @@ Si vous utilisez une base de données, assurez-vous que les configurations sont 
 
 ### Entity
 
-Pour chaque table que vous utiliserez vous créerez une classe d'entité correspondante, dans laquelle chaque attribut correspond clairement à une colonne, et s'écrit exactement de la même manière.<br/>
+Pour chaque table que vous utiliserez vous créerez une classe d'entité correspondante.<br/>
 
 Par exemple pour une table <b>articles</b> avec des colonnes suivantes :
 <ul>
@@ -220,6 +220,8 @@ Par exemple pour une table <b>articles</b> avec des colonnes suivantes :
 <li>contenu</li>
 <li>auteur</li>
 <li>date_publication</li>
+<li>date_modification</li>
+<li>commentaires</li>
 </ul>
 
 Vous aurez une classe ```Article``` dérivée de la classe ```Gravity\Core\App\Entity\Entity``` :
@@ -232,11 +234,30 @@ class Article extends Entity {
     private $contenu;
     private $auteur;
     private $date_publication;
+    private $date_modification;
+    private $date_commentaires;
 
 }
 ```
 
 <b>Note</b> : Inutile de préciser l'attribut ```id```, puisque gravity prend en charge automatiquement les clés primaires.
+
+Vous pouvez aussi ne mettre que les champs requis de la table : 
+
+```php
+use Gravity\Core\App\Entity\Entity;
+
+class Article extends Entity {
+
+    protected static $required = [
+        'titre',
+        'contenu',
+        'auteur',
+        'date_publication'
+    ];
+
+}
+```
 
 ### Repository
 
@@ -255,8 +276,9 @@ class ArticleRepository extends Repository {
 }
 ```
 
-<b>Attention</b> : Si la clé primaire de votre table porte un nom différent de <b>id</b>, vous devez absolument ajouter le champ statique ```$primary_key``` avec comme valeur le nom de la clé de la manière suivante :<br/>
-```protected static $primary_key = "article_id";```, vous devez ajouter aussi l'attribut dans la classe d'entité correspondante contrairement à l'exemple précédente, puisque la clé primaire porte un nom différent de <b>id</b>.
+<b>Attention</b> : Si la clé primaire de votre table porte un nom différent de <b>id</b>, vous devez absolument ajouter le champ statique ```$primary_key``` avec comme valeur le nom de la clé de la manière suivante :<br/><br/>
+```protected static $primary_key = "article_id";```.
+
 
 ### Récupération et maipulation des données
 Vous pouvez maintenant manipuler ou récupérer les données soit à travers un controleur ou directement lors de la définition des routes par exemple pour le rendre à l'utilisateur.
@@ -322,12 +344,15 @@ class ArticleResource extends AbstractResource {
     protected $entity = Article::class;
 
     public function toArray() {
-        return [
-            'id' => $this->entity->getId(),
-            'rédacteur' => $this->entity->getAuteur(),
-            'contenu' => substr($this->entity->getContenu(), 0, 20).'...',
-            'date publication' => $this->entity->getDate_publication()
-        ];
+        $data = $this->entity->toArray();
+
+        unset($data['auteur']);
+        
+        $data['rédacteur'] = $this->entity->getAuteur();
+
+        $data['contenu'] = substr($this->entity->getContenu(), 0, 20).'...';
+
+        return $data;
     }
 
 }
@@ -359,4 +384,3 @@ Toutes les contributions sont les bienvenues en vue d'améliorer la librairie et
 
 ## Extra 
 N'hésitez pas à reporter vos problèmes dans la section [issues](https://github.com/schery19/gravity-core/issues), pour une meilleure communication et contribuer le plus possible à l'avancement du projet
-
