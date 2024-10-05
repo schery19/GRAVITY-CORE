@@ -233,6 +233,8 @@ class Article extends Entity {
 }
 ```
 
+<b>Note</b> : Inutile de préciser l'attribut ```id```, puisque gravity prend en charge automatiquement les clés primaires.
+
 ### Repository
 
 Pour chaque classe d'entité créée, il faut une classe de type ```Gravity\Core\App\Repository\Repository```, pour communiquer effectivement avec la base à tout moment.
