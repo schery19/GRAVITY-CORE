@@ -324,9 +324,9 @@ class ArticleResource extends AbstractResource {
 
         unset($data['auteur']);
         
-        $data['rédacteur'] = $this->entity->getAuteur();
+        $data['rédacteur'] = $this->entity->auteur;
 
-        $data['contenu'] = substr($this->entity->getContenu(), 0, 20).'...';
+        $data['contenu'] = substr($this->entity->contenu, 0, 20).'...';
 
         return $data;
     }
