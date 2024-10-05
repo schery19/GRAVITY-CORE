@@ -96,41 +96,44 @@ class Route extends AbstractResource {
 	 */
 	public function execute($router) {
 
-		$params = null; //explode('@', $this->action);
+		$params = $this->action; //explode('@', $this->action);
 
+		if(is_string($this->action)) {
+			$params = explode('@', $this->action);
+		
+		}
+		
 		if(is_callable($this->action)) {
 
 			$functionName = !is_array($this->action)?(new \ReflectionFunction($this->action)) : 
 							(new \ReflectionMethod($this->action[0], $this->action[1]));
-
+			
 			$args = $functionName->getParameters();
 
 			if(!is_array($this->action)) {
 				call_user_func_array($this->action, $args);
+				exit;
 			} else {
-				$methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):array();
+				// $methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):array();
 
-				$functionName->invokeArgs(new $this->action[0]($router), $methodArgs);
+				// $functionName->invokeArgs(new $this->action[0]($router), $methodArgs);
+
+				// return (new $functionName->class)->invoke($functionName->name, $methodArgs, $router);
+
 			}
 			
-		} else {
+		}
 
-			if(is_array($this->action))
-				$params = $this->action;
-			else 
-				$params = explode('@', $this->action);
+		try {
 
-			try {
+			$controller = new $params[0]();
+			$method = $params[1];
+			$methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):null;//Les arguments présents dans l'url
 
-				$controller = new $params[0]();
-				$method = $params[1];
-				$methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):null;//Les arguments présents dans l'url
+			return $controller->invoke($method, $methodArgs, $router);
 
-				return $controller->invoke($method, $methodArgs, $router);
-
-			} catch(\Error $e) {//Controlleur ou méthode de controlleur introuvable
-				throw new ControllerException($e);
-			}
+		} catch(\Error $e) {//Controlleur ou méthode de controlleur introuvable
+			throw new ControllerException($e);
 		}
 	}
 
