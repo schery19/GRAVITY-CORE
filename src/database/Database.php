@@ -16,7 +16,7 @@ class Database {
 	private $pass;
 	private $dbName;
 
-	private $db;
+	private \PDO $db;
 
 
 	public function __construct($configs = array())
@@ -32,7 +32,7 @@ class Database {
 
 		try {
 			$this->db = new \PDO(
-				"$this->server:host=$this->host:$this->port;dbname=$this->dbName",
+				"$this->server:host=$this->host;dbname=$this->dbName",
 				$this->user,
 				$this->pass,
 				array(
@@ -42,12 +42,12 @@ class Database {
 
 			$this->db->exec("SET NAMES UTF8");
 		} catch (\PDOException $e) {
-			throw new \Exception("Impossible de se connecter, cause ".$e->getMessage());
+			throw new \Exception("Unable to connect, cause ".$e->getMessage());
 		}
 	}
 
 
-	public function query($sql, $params = array(), $out = PDO::FETCH_OBJ) {
+	public function query($sql, $params = array(), $out = \PDO::FETCH_OBJ) {
 		$data = array();
 
 		try {
@@ -63,7 +63,7 @@ class Database {
 	}
 
 
-	public function exec($sql, $params = array()) {
+	public function exec(string $sql, $params = array()) {
 		try {
 			$req = $this->db->prepare($sql);
 
@@ -80,7 +80,7 @@ class Database {
 		}
 	}
 
-	
+
 	public function insert($sql, $params = array()) {
 		$typeReq = explode(' ', $sql);
 
@@ -95,6 +95,9 @@ class Database {
 			return false;
 		
 	}
+
+
+	public function getDB() { return $this->db; }
 
 }
 
