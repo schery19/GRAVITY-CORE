@@ -11,27 +11,28 @@ use Gravity\Core\App\Entity\Entity;
 use Gravity\Core\Database\Database;
 use Gravity\Core\Exceptions\BadRequestException;
 use Gravity\Core\Exceptions\ControllerException;
+use Gravity\Core\Exceptions\NotFoundException;
 
 
 
 abstract class Repository {
 
-    protected static $entity;
+	protected static $entity;
 	protected static $db;
-    protected static $table;
-    protected static $columns = array();
+	protected static $table;
+	protected static $columns = array();
 
 	protected static $primary_key = "";
 
 
-	protected static function getDatabase($configs = array()) {
-		static::$primary_key = (static::$primary_key == "")?"id":static::$primary_key;
+	protected static function getDatabase($configs = array())
+	{
+		static::$primary_key = (static::$primary_key == "") ? "id" : static::$primary_key;
 		return static::$db = new Database(require("../configs/database.php"));
 	}
 
 
 
-	
 	/**
 	 * Trouver tous les enregistrements
 	 * 
@@ -62,10 +63,13 @@ abstract class Repository {
 		$req = self::getDatabase()->query("select $columnString from ". static::$table ." $orderString $limitString $offsetString", array(), \PDO::FETCH_ASSOC);
 
 		foreach($req as $e) {
-			if(!array_key_exists(static::$primary_key, $e))
-				throw new ControllerException("Unable to find primary key ".static::$primary_key." on ".static::class);
-
-			array_push($entities, (new static::$entity($e))->setId($e[static::$primary_key]));
+			$entity = new static::$entity($e);
+			
+			if(array_key_exists(static::$primary_key, $e))
+				$entity->setId($e[static::$primary_key]);
+			
+			
+			array_push($entities, $entity);
 		}
 
 		return $entities;
@@ -93,11 +97,37 @@ abstract class Repository {
 		
 	}
 
-	
- 	/**
+
+
+	/**
+	 * Trouver un enregistrement à partir d'un identifiant unique (l'id)
+	 * 
+	 * @param mixed $id
+	 * 
+	 * @return object|null
+	 * 
+	 * @throws NotFoundException
+	*/
+	public static function findOrFail($id, $fallingMessage = '') {
+
+		$entity = static::find($id);
+
+		if($fallingMessage == '')
+			$fallingMessage = static::$entity.' not found';
+
+		if(is_null($entity))
+			throw new NotFoundException($fallingMessage);
+
+		return $entity;
+		
+	}
+
+
+
+	/**
   	 * Trouver un/des enregistrement(s) à partir d'une/des condition(s)
-	 * Retourne un tableau ou un objet si toutes les conditions ont été vérifiées
-	 * Retourne un tableau vide si aucune donnée n'a été trouvée ou un objet en cas d'un seul enregistrement trouvé
+	 * Retourne un tableau d'entités si toutes les conditions ont été vérifiées
+	 * Retourne un tableau vide si aucune donnée n'a été trouvée
 	 * 
   	 * @param array $whereColums colonnes sur lesquelles les conditions ont été posées
   	 * @param array $values valeurs colonnes conditionnées
@@ -110,7 +140,7 @@ abstract class Repository {
 	 * 
 	 * @throws ControllerException
   	*/
-	public static function findWhere(array $whereColums, array $values, string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
+	  public static function findWhere(array $whereColums, array $values, string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
 
 		static::validEntity();
 
@@ -151,9 +181,101 @@ abstract class Repository {
 
 
 	/**
+	 * Trouver un/des enregistrement(s) à partir d'une/des condition(s)
+	 * Retourne un tableau d'entités si toutes les conditions ont été vérifiées
+	 * Retourne un tableau vide si aucune donnée n'a été trouvée
+	 * 
+	 * @param array $whereColums colonnes sur lesquelles les conditions ont été posées
+	 * @param array $values valeurs colonnes conditionnées
+	 * @param string|null $orderClause Colonnes à ordonner
+	 * @param string|null $orderArgs type d'ordonancement (ASC ou DESC)
+	 * @param int|null $limit Nombre d'enregistrements à récupérer
+	 * @param int|null $offset point de départ
+	 * 
+	 * @return array
+	 * 
+	 * @throws ControllerException
+	 */
+	public static function findWhereWithOperators(
+		array $columns,
+		array $values,
+		array $operators,
+		array $logicalOperators = [], // Ajout de ce paramètre pour les opérateurs logiques
+		string $orderClause = null,
+		string $orderArgs = null,
+		int $limit = null,
+		int $offset = null
+	) {
+		static::validEntity();
+		self::getDatabase();
+
+		if (\count($columns) < 1) {
+			throw new ControllerException("Column(s) not specified on " . static::class . "::findWhere method");
+		}
+
+		if (\count($operators) < 1) {
+			throw new ControllerException("Operator(s) not specified on " . static::class . "::findWhere method");
+		}
+
+		if (\count($values) < 1) {
+			throw new ControllerException("Column(s) value(s) not specified on " . static::class . "::findWhere method");
+		}
+
+		if (\count($columns) !== \count($operators) || \count($columns) !== \count($values)) {
+			throw new ControllerException("The number of columns, operators, and values must be the same.");
+		}
+
+		// Construction de la clause WHERE
+		$whereClauseParts = [];
+		for ($i = 0; $i < \count($columns); $i++) {
+			$column = $columns[$i];
+			$operator = $operators[$i];
+			if (!in_array($operator, ['=', '!=', '<', '>', '<=', '>='])) {
+				throw new ControllerException("Invalid operator: $operator");
+			}
+			$whereClauseParts[] = "$column $operator ?";
+		}
+
+		// Appliquer les opérateurs logiques, avec 'AND' comme valeur par défaut
+		if (!empty($logicalOperators)) {
+			if (\count($logicalOperators) !== (\count($whereClauseParts) - 1)) {
+				throw new ControllerException("The number of logical operators must be one less than the number of conditions.");
+			}
+			$whereClause = $whereClauseParts[0];
+			for ($i = 0; $i < \count($logicalOperators); $i++) {
+				$whereClause .= ' ' . strtoupper($logicalOperators[$i]) . ' ' . $whereClauseParts[$i + 1];
+			}
+		} else {
+			// Utilisation de 'AND' comme opérateur logique par défaut
+			$whereClause = implode(' AND ', $whereClauseParts);
+		}
+
+		// Construction des chaînes ORDER BY, LIMIT et OFFSET
+		$orderString = (!\is_null($orderClause) && !\is_null($orderArgs)) ? "ORDER BY $orderClause $orderArgs" : "";
+		$limitString = (!\is_null($limit)) ? "LIMIT " . $limit : "";
+		$offsetString = (!\is_null($offset)) ? "OFFSET " . $offset : "";
+
+		// Préparation et exécution de la requête
+		$sql = "SELECT * FROM " . static::$table . " WHERE " . $whereClause . " " . $orderString . " " . $limitString . " " . $offsetString;
+		$req = self::getDatabase()->query($sql, $values, \PDO::FETCH_ASSOC);
+
+		if (\count($req) >= 1) {
+			$entities = [];
+			foreach ($req as $e) {
+				$entities[] = (new static::$entity($e))->setId($e[static::$primary_key]);
+			}
+			return $entities;
+		} else {
+			return [];
+		}
+	}
+
+
+
+	/**
   	 * Trouver un/des enregistrement(s) à partir d'une/des condition(s)
-	 * Retourne un tableau ou un objet si au moins l'une des conditions est vérifiée
-	 * Retourne un tableau vide si aucune donnée n'a été trouvée ou un objet en cas d'un seul enregistrement trouvé
+	 * Retourne un tableau d'entités si au moins l'une des conditions est vérifiée
+	 * Retourne un tableau vide si aucune donnée n'a été trouvée
 	 * 
   	 * @param array $whereColums colonnes sur lesquelles les conditions ont été posées
   	 * @param array $values valeurs colonnes conditionnées
@@ -217,6 +339,8 @@ abstract class Repository {
 	 * @param int|null $offset point de départ
 	 * 
 	 * @return array
+	 * 
+	 * @throws ControllerException
 	*/
 	public static function fromQuery(string $req, array $values = array(), string $orderClause = null, string $orderArgs = null, int $limit = null, int $offset = null) {
 
@@ -308,7 +432,7 @@ abstract class Repository {
 		
 	}
 
-
+	
 	/**
 	 * Mise à jour d'un enregistrement
 	 * 
@@ -318,50 +442,62 @@ abstract class Repository {
 	 * @return bool|null
 	 * 
 	 * @throws BadRequestException
-	*/
-	public static function update(array $data, $where) {
+	 */
+	public static function update(Entity $entity)
+	{
 
 		static::validEntity();
 
-		self::getDatabase();
+		try {
 
-		$response = false;
+			self::getDatabase();
 
-		//On vérifie que tous les champs obligatoires sont renseignés
-		if(\count((new static::$entity())->getRequiredColumns()) > 0) {
-
-			foreach((new static::$entity())->getRequiredColumns() as $r) {
-
-				if($r == static::$primary_key) //Inutil pour la clé primaire puisqu'elle est déjà en argument de la fonction
-					continue;
-
-				if(!array_key_exists($r, $data))
-					throw new BadRequestException("{$r} field required");
+			// On vérifie que tous les champs obligatoires sont renseignés
+			if (\count((new static::$entity())->getRequiredColumns()) > 0) {
+				foreach ((new static::$entity())->getRequiredColumns() as $r) {
+					if (!array_key_exists($r, $entity->toArray())) {
+						throw new BadRequestException("{$r} field required");
+					}
+				}
 			}
+
+			// Récupérer l'ID de l'entité (ou la clé primaire)
+			$id = (array_key_exists(static::$primary_key, $entity->toArray()))
+				? $entity->toArray()[static::$primary_key]
+				: $entity->toArray()['id'];
+
+			// Définir l'ID dans l'entité
+			$entity = $entity->setId($id);
+
+			$dataArray = $entity->toArray();
+			unset($dataArray['id']); // On ne met pas à jour l'ID
+
+			// Générer la requête SQL pour l'UPDATE
+			$updateFields = [];
+			foreach ($dataArray as $column => $value) {
+
+				if(!in_array($column, static::getColumns())) {
+					unset($dataArray[$column]);
+					continue;
+				}
+
+				$updateFields[] = "{$column} = ?";
+			}
+
+			$sql = "UPDATE " . static::$table . " SET " . \implode(", ", $updateFields) . " WHERE " . static::$primary_key . " = ?";
+
+			// Ajouter l'ID à la fin des données à passer à la requête
+			$dataArray[] = $id;
+
+			$req = self::getDatabase()->exec($sql, array_values($dataArray));
+
+			return $req;
+
+		} catch (BadRequestException $e) {
+			throw new BadRequestException($e->getMessage());
+		} catch (\Exception $e) {
+			throw new \Exception($e);
 		}
-
-		unset($data['id']);
-
-		$columns = array();
-
-		foreach($data as $k => $v) {
-			$columns[] = $k."=?";
-		}
-
-		$columnsString = \implode(',', $columns);
-
-		$sqlDel = "update ". static::$table . " set ". $columnsString ." where " . static::$primary_key ." = ?";
-
-		$data['id'] = $where;
-
-		$req = self::getDatabase()->exec($sqlDel, $data);
-
-		if($req) {
-			$response = true;
-		}
-
-		return $response;
-		
 	}
 
 
@@ -395,20 +531,21 @@ abstract class Repository {
 
 
 	/**
-	 * Effectuer une correspondance entre la requete spécifiée et l'entité dont le repository est responsable
+	 * Effectuer une correspondance entre la requête spécifiée et l'entité dont le repository est responsable
 	 * 
 	 * @param string $values la requete
 	 * 
 	 * @throws ControllerException
-	*/
-	private static function validTable($req) {
-		
+	 */
+	private static function validTable($req)
+	{
+
 		$tabReq = explode(' ', $req);
 
-		foreach($tabReq as $i => $token) {
-			if($tabReq[$i] == strcasecmp($token, "from")) {
-				if($tabReq[$i+1] != static::$table)
-					throw new ControllerException("Unable to link {$tabReq[$i+1]} table with ".static::class);
+		foreach ($tabReq as $i => $token) {
+			if ($tabReq[$i] == strcasecmp($token, "from")) {
+				if ($tabReq[$i + 1] != static::$table)
+					throw new ControllerException("Unable to link {$tabReq[$i + 1]} table with " . static::class);
 			}
 		}
 	}
@@ -422,6 +559,88 @@ abstract class Repository {
 	private static function validEntity() {
 		if(\is_null(static::$entity))
 			throw new ControllerException("Unable to find a valid entity");
+	}
+
+
+	/**
+	 * Récupérer la liste des colonnes de la table associée à l'entité du repository correspondant
+	 * 
+	 * @return array
+	 * 
+	 * @throws ControllerException
+	 */
+	public static function getColumns() {
+
+		static::validEntity();
+
+		$req = self::getDatabase()->query("DESC ". static::$table);
+
+		$fields = [];
+
+		foreach($req as $result) {
+			$fields[] = $result->Field;
+		}
+
+		return $fields;
+	}
+
+
+	/**
+	 * Récupérer les informations de la table associée à l'entité du repository correspondant
+	 * 
+	 * @return array
+	 * 
+	 * @throws ControllerException
+	 */
+	public static function table() {
+
+		static::validEntity();
+
+		$req = self::getDatabase()->query("DESC ". static::$table);
+
+		return $req;
+	}
+
+
+	/**
+	 * Récupérer le datetime courant en fonction du serveur de données utilisé
+	 * 
+	 * @return string datetime courant
+	 */
+	public static function currentDateTime() {
+		$currentDateTime = Repository::rawQuery("SELECT CURRENT_TIMESTAMP() as current_date_time")[0];
+
+        return $currentDateTime['current_date_time'];
+	}
+
+
+	/**
+	 * Initier une transactions sql
+	 * 
+	 * @return bool
+	 */
+	public static function beginTransaction() {
+		return self::$db->getDB()->beginTransaction();
+	}
+
+
+	/**
+	 * Valider une transaction sql
+	 * 
+	 * @return bool
+	 */
+	public static function commit() {
+		return self::$db->getDB()->commit();
+	}
+
+
+	/**
+	 * Annuler une transaction sql
+	 * 
+	 * @return bool
+	 */
+	public static function rollback() {
+		return self::$db->getDB()->rollBack();
 	}
 
 
