@@ -68,6 +68,18 @@ abstract class AbstractResource implements ResourceArray {
     }
 
 
+    public function toJSON() {
+        return json_encode($this->toRender());
+    }
+
+
+    public static function fromJSON(string $json, string $class) {
+        $data = json_decode($json, true);
+
+        return new $class($data);
+    }
+
+
 }
 
 
