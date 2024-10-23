@@ -113,6 +113,18 @@ class Router {
 	public function patch(string $path, $action, $name='') {
 		$this->routes['PATCH'][] = new Route($path, $action, $name);
 	}
+
+
+	/**
+	 * Définition d'ume route en DELETE
+	 * 
+	 * @param string $path le chemin générique de la route.
+	 * @param string|array|callable $action action à exécuter lors du déclenchement de la route
+	 * @param string $name le nom de la route (optionnel)
+	 */
+	public function delete(string $path, $action, $name='') {
+		$this->routes['DELETE'][] = new Route($path, $action, $name);
+	}
 	
 
 	/**
@@ -138,6 +150,10 @@ class Router {
 
 		foreach($resourceRoutes->patch as $route) {
 			$this->patch($route->getPath(), $route->getAction(), $route->getName());
+		}
+
+		foreach($resourceRoutes->delete as $route) {
+			$this->delete($route->getPath(), $route->getAction(), $route->getName());
 		}
 	}
 
