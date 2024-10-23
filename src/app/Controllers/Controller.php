@@ -13,7 +13,7 @@ use Gravity\Core\Exceptions\BadMethodException;
 use Gravity\Core\Exceptions\BadRequestException;
 use Gravity\Core\Exceptions\NoRouteException;
 use Gravity\Core\Exceptions\RenderException;
-use Gravity\Core\Exceptions\ControllerException;
+use Gravity\Core\Routing\Router;
 
 
 class Controller {
@@ -114,7 +114,7 @@ class Controller {
 
 
 	/**
-	 * Générer un lien directement à partir d'une vue\
+	 * Générer un lien directement à partir d'une vue
 	 * 
 	 * @param string $url l'url à générer
 	 * 
@@ -129,29 +129,22 @@ class Controller {
 	 * Exécuter dynamiquement une fonction avec ses éventuels arguments
 	 * 
 	 * @param string $methodName le nom de la méthode du controleur exécuter
-	 * @param mixed $arguments les éventuels arguments de la méthode
-	 * @param mixed $router le router qui exécute le controleur
-	 * 
+	 * @param Router $router le router qui exécute le controleur
+	 * @param array $arguments les éventuels arguments de la méthode
 	 * @throws \Gravity\Core\Exceptions\ControllerException
 	 * 
 	 * @return mixed
 	 */
-	public function invoke(string $methodName, $arguments = array(), $router) {
+	public function invoke(string $methodName, Router $router, $arguments = array()) {
 
-		try {
+		$this->router = $router;
 
-			$this->router = $router;
+		$method = (new \ReflectionMethod($this, $methodName));
 
-			$method = (new \ReflectionMethod($this, $methodName));
-
-			return !empty($arguments)?$method->invokeArgs($this, $arguments):$this->$methodName();
-
-		} catch(\Exception $e) {
-			throw new ControllerException($e);
-		}
+		return !empty($arguments)?$method->invokeArgs($this, $arguments):$this->$methodName();
 		
 	}
-
+	
 
 	public function redirect($destination) {
 		header('Location: '.$destination);
@@ -168,7 +161,7 @@ class Controller {
 	 * 
 	 * @throws BadMethodException|BadRequestException|NoRouteException
 	 */
-	public function route($name, $values = array(), $router = '') {
+	public function route($name, $values = array()) {
 
 		$found = false;
 
