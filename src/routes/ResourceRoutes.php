@@ -33,8 +33,11 @@ abstract class ResourceRoutes {
 	 */
     public $patch = [];
 
-	
-	protected Router $router;
+	/** 
+	 * Les routes en DELETE supportées par la ressource
+	 * @var array<Route>
+	 */
+    public $delete = [];
 
 
 	abstract function __construct();
