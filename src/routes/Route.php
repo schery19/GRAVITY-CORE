@@ -113,13 +113,6 @@ class Route extends AbstractResource {
 			if(!is_array($this->action)) {
 				call_user_func_array($this->action, $args);
 				exit;
-			} else {
-				// $methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):array();
-
-				// $functionName->invokeArgs(new $this->action[0]($router), $methodArgs);
-
-				// return (new $functionName->class)->invoke($functionName->name, $methodArgs, $router);
-
 			}
 			
 		}
@@ -138,7 +131,7 @@ class Route extends AbstractResource {
 	}
 
 
-	private function getArguments(array $args) {
+	public function getArguments(array $args) {
 
 		$arguments = array();
 
