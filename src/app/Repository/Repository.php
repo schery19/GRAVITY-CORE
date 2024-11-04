@@ -28,7 +28,8 @@ abstract class Repository {
 	protected static function getDatabase($configs = array())
 	{
 		static::$primary_key = (static::$primary_key == "") ? "id" : static::$primary_key;
-		return static::$db = new Database(require("../configs/database.php"));
+
+		return static::$db = new Database((!empty($configs))?$configs:require("../configs/database.php"));
 	}
 
 
@@ -60,7 +61,7 @@ abstract class Repository {
 
 		$offsetString = (!\is_null($offset)) ? "offset ".$offset : "";
 
-		$req = self::getDatabase()->query("select $columnString from ". static::$table ." $orderString $limitString $offsetString", array(), \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query("select $columnString from ". static::$table ." $orderString $limitString $offsetString", array(), \PDO::FETCH_ASSOC);
 
 		foreach($req as $e) {
 			$entity = new static::$entity($e);
@@ -88,7 +89,7 @@ abstract class Repository {
 
 		static::validEntity();
 
-		$req = self::getDatabase()->query("select * from ". static::$table ." where ".static::$primary_key." = ?", array($id), \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query("select * from ". static::$table ." where ".static::$primary_key." = ?", array($id), \PDO::FETCH_ASSOC);
 
 		if(count($req) < 1)
 			return null;
@@ -144,7 +145,7 @@ abstract class Repository {
 
 		static::validEntity();
 
-		self::getDatabase();
+		static::getDatabase();
 
 		if(\count($whereColums) < 1)
 			throw new ControllerException("Column(s) not specified on ".static::class."::findWhere method");
@@ -162,7 +163,7 @@ abstract class Repository {
 
 		$offsetString = (!\is_null($offset)) ? "offset ".$offset : "";
 
-		$req = self::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
 		if(\count($req) >= 1) {
 
@@ -207,7 +208,7 @@ abstract class Repository {
 		int $offset = null
 	) {
 		static::validEntity();
-		self::getDatabase();
+		static::getDatabase();
 
 		if (\count($columns) < 1) {
 			throw new ControllerException("Column(s) not specified on " . static::class . "::findWhere method");
@@ -257,7 +258,7 @@ abstract class Repository {
 
 		// Préparation et exécution de la requête
 		$sql = "SELECT * FROM " . static::$table . " WHERE " . $whereClause . " " . $orderString . " " . $limitString . " " . $offsetString;
-		$req = self::getDatabase()->query($sql, $values, \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query($sql, $values, \PDO::FETCH_ASSOC);
 
 		if (\count($req) >= 1) {
 			$entities = [];
@@ -292,7 +293,7 @@ abstract class Repository {
 
 		static::validEntity();
 
-		self::getDatabase();
+		static::getDatabase();
 
 		if(\count($whereColums) < 1)
 			throw new ControllerException("Column(s) not specified on ".static::class."::findOrWhere method");
@@ -310,7 +311,7 @@ abstract class Repository {
 
 		$offsetString = (!\is_null($offset)) ? "offset ".$offset : "";
 
-		$req = self::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query("select * from ". static::$table ." where ". $whereClause . " $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
 		if(\count($req) >= 1) {
 
@@ -354,7 +355,7 @@ abstract class Repository {
 
 		$offsetString = (!\is_null($offset)) ? "offset ".$offset : "";
 
-		$req = self::getDatabase()->query($req." $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query($req." $orderString $limitString $offsetString", $values, \PDO::FETCH_ASSOC);
 
 		if(\count($req) >= 1) {
 
@@ -387,7 +388,7 @@ abstract class Repository {
 
 		try {
 
-			self::getDatabase();
+			static::getDatabase();
 
 			//On vérifie que tous les champs obligatoires sont renseignés
 			if(\count((new static::$entity())->getRequiredColumns()) > 0) {
@@ -421,7 +422,7 @@ abstract class Repository {
 
 			$sql = "insert into ". static::$table ." (". \implode(',', array_keys($dataArray)) .") values(". $placeHolders .")";
 
-			$req = self::getDatabase()->exec($sql, $dataArray);
+			$req = static::getDatabase()->exec($sql, $dataArray);
 
 			return $req;
 		} catch(BadRequestException $e) {
@@ -450,7 +451,7 @@ abstract class Repository {
 
 		try {
 
-			self::getDatabase();
+			static::getDatabase();
 
 			// On vérifie que tous les champs obligatoires sont renseignés
 			if (\count((new static::$entity())->getRequiredColumns()) > 0) {
@@ -489,7 +490,7 @@ abstract class Repository {
 			// Ajouter l'ID à la fin des données à passer à la requête
 			$dataArray[] = $id;
 
-			$req = self::getDatabase()->exec($sql, array_values($dataArray));
+			$req = static::getDatabase()->exec($sql, array_values($dataArray));
 
 			return $req;
 
@@ -512,7 +513,7 @@ abstract class Repository {
 	*/
 	public static function rawQuery(string $req, array $values = array()) {
 
-		$req = self::getDatabase()->query($req, $values, \PDO::FETCH_ASSOC);
+		$req = static::getDatabase()->query($req, $values, \PDO::FETCH_ASSOC);
 
 		if(\count($req) >= 1) {
 
@@ -573,7 +574,7 @@ abstract class Repository {
 
 		static::validEntity();
 
-		$req = self::getDatabase()->query("DESC ". static::$table);
+		$req = static::getDatabase()->query("DESC ". static::$table);
 
 		$fields = [];
 
@@ -596,7 +597,7 @@ abstract class Repository {
 
 		static::validEntity();
 
-		$req = self::getDatabase()->query("DESC ". static::$table);
+		$req = static::getDatabase()->query("DESC ". static::$table);
 
 		return $req;
 	}
