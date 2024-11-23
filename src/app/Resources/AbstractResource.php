@@ -80,6 +80,37 @@ abstract class AbstractResource implements ResourceArray {
     }
 
 
+
+    public static function loadEntity(array $data, string $class, Closure $callbackMissed = null) {
+
+        $splitClass = explode('\\', $class);
+
+        $entityRepository = 'App\\Repository\\'.$splitClass[count($splitClass)-1].'Repository';
+
+        $entity = new $class();
+
+        foreach($entityRepository::getColumns() as $attr) {
+
+            if(!array_key_exists($attr, $data)) {
+
+                if(!in_array($attr, $entity->getRequiredColumns()))
+                    continue;
+                
+                if(!is_null($callbackMissed))
+                    $callbackMissed($attr);
+
+            }
+
+            $entity->$attr = $data[$attr]??null;
+
+        }
+
+
+        return $entity;
+
+    }
+
+
 }
 
 
