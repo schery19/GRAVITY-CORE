@@ -81,7 +81,7 @@ abstract class AbstractResource implements ResourceArray {
 
 
 
-    public static function loadEntity(array $data, string $class, Closure $callbackMissed = null) {
+    public static function loadEntity(array $data, string $class, \Closure $callbackMissed = null) {
 
         $splitClass = explode('\\', $class);
 
