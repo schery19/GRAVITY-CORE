@@ -9,6 +9,8 @@ namespace Gravity\Core\Routing;
 
 abstract class ResourceRoutes {
 
+	protected Router $router;
+
     /** 
 	 * Les routes en GET supportées par la ressource
 	 * @var array<Route>

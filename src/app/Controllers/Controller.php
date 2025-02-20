@@ -161,7 +161,7 @@ class Controller {
 	 * 
 	 * @throws BadMethodException|BadRequestException|NoRouteException
 	 */
-	public function route($name, $values = array()) {
+	public function route($name, $values = array(), $absolute = false) {
 
 		$found = false;
 
@@ -192,7 +192,9 @@ class Controller {
 
 				$found = true;
 
-				return $finalUrl;
+				$base_uri = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'];
+
+				return ($absolute)?$base_uri.'/'.$finalUrl:$finalUrl;
 
 			}
 

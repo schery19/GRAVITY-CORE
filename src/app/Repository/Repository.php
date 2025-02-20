@@ -437,8 +437,7 @@ abstract class Repository {
 	/**
 	 * Mise à jour d'un enregistrement
 	 * 
-	 * @param array $data les nouvelles données à persister dans la base
-	 * @param mixed $where l'id correspondant
+	 * @param Entity $entity l'entité avec ses propriétés à jour
 	 * 
 	 * @return bool|null
 	 * 
@@ -470,6 +469,14 @@ abstract class Repository {
 			// Définir l'ID dans l'entité
 			$entity = $entity->setId($id);
 
+			$oldEntity = static::find($id);
+
+			if($entity->toArray() != $oldEntity->toArray()) {
+				if(in_array('updated_at', static::getColumns())) {
+					$entity->updated_at = static::currentDateTime();
+				}
+			}
+
 			$dataArray = $entity->toArray();
 			unset($dataArray['id']); // On ne met pas à jour l'ID
 
@@ -477,10 +484,9 @@ abstract class Repository {
 			$updateFields = [];
 			foreach ($dataArray as $column => $value) {
 
-				if(!in_array($column, static::getColumns())) {
-					unset($dataArray[$column]);
-					continue;
-				}
+				if(!in_array($column, static::getColumns()))
+					throw new BadRequestException("{$column} field unkown");
+					
 
 				$updateFields[] = "{$column} = ?";
 			}
@@ -491,6 +497,7 @@ abstract class Repository {
 			$dataArray[] = $id;
 
 			$req = static::getDatabase()->exec($sql, array_values($dataArray));
+
 
 			return $req;
 
