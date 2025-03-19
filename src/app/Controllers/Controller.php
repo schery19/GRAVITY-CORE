@@ -129,13 +129,13 @@ class Controller {
 	 * Exécuter dynamiquement une fonction avec ses éventuels arguments
 	 * 
 	 * @param string $methodName le nom de la méthode du controleur exécuter
-	 * @param array $arguments les éventuels arguments de la méthode
 	 * @param Router $router le router qui exécute le controleur
+	 * @param array $arguments les éventuels arguments de la méthode
 	 * @throws \Gravity\Core\Exceptions\ControllerException
 	 * 
 	 * @return mixed
 	 */
-	public function invoke(string $methodName, $arguments = array(), Router $router) {
+	public function invoke(string $methodName, Router $router, $arguments = array()) {
 
 		$this->router = $router;
 

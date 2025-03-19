@@ -123,7 +123,7 @@ class Route extends AbstractResource {
 			$method = $params[1];
 			$methodArgs = (count($this->matches) > 1)?$this->getArguments($this->matches):null;//Les arguments présents dans l'url
 
-			return $controller->invoke($method, $methodArgs, $router);
+			return $controller->invoke($method, $router, $methodArgs);
 
 		} catch(\Error $e) {//Controlleur ou méthode de controlleur introuvable
 			throw new ControllerException($e);
