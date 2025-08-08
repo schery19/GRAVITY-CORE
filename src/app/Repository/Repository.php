@@ -433,6 +433,45 @@ abstract class Repository {
 		
 	}
 
+
+	/**
+	 * Supprimer un enregistrement
+	 * 
+	 * @param Entity $entity l'entité à supprimer
+	 * 
+	 * @return bool|null
+	 * 
+	 * @throws BadRequestException
+	*/
+	public static function delete(Entity $entity) {
+
+		static::validEntity();
+
+		try {
+
+			static::getDatabase();
+
+			// On vérifie que l'ID de l'entité est renseigné
+			if(!array_key_exists(static::$primary_key, $entity->toArray()))
+				throw new BadRequestException(static::$primary_key . " field required");
+
+			$id = $entity->toArray()[static::$primary_key];
+
+			// Générer la requête SQL pour la suppression
+			$sql = "DELETE FROM ". static::$table ." WHERE ". static::$primary_key ." = ?";
+
+			$req = static::getDatabase()->exec($sql, array($id));
+
+			return $req;
+
+		} catch(BadRequestException $e) {
+			throw new BadRequestException($e->getMessage());
+		} catch(\Exception $e) {
+			throw new \Exception($e);
+		}
+		
+	}
+
 	
 	/**
 	 * Mise à jour d'un enregistrement
